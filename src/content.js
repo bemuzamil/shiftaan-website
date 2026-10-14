@@ -4,6 +4,13 @@
 
 export const siteUrl = "https://shiftaan.com";
 
+// Blog post <title>. seo_title from the CMS may already end in "| Shiftaan Blog",
+// so strip it before appending to avoid "… | Shiftaan Blog | Shiftaan Blog".
+export const blogTitle = (t) => `${String(t).replace(/(\s*\|\s*Shiftaan Blog)+\s*$/i, "")} | Shiftaan Blog`;
+
+// Make a CMS image value ("x.jpg", "/assets/x.jpg" or a full URL) an absolute URL for og:image / JSON-LD.
+export const absImage = (img) => !img ? "" : /^https?:\/\//.test(img) ? img : img.startsWith("/") ? siteUrl + img : `${siteUrl}/assets/${img}`;
+
 // [slug, title, excerpt, image, category, readTime, isoDate]
 export const posts = [
   ["how-to-track-your-work-hours-when-you-have-multiple-jobs","How to Track Your Work Hours When You Have Multiple Jobs","Why the Notes app isn't enough—and a simpler way to track hours, rates and unpaid shifts.","Track-Hours-Across-Multiple-Jobs.jpg","Shift tracking","6 min","2026-09-24"],
@@ -31,7 +38,7 @@ export const pageMeta = {
   },
   "/pricing": {
     title: "Pricing | Shiftaan Shift Tracker App",
-    description: "Track shifts for one company free, or unlock unlimited companies for £2.49/month. Simple pricing for Shiftaan's security guard shift tracker.",
+    description: "Track shifts for up to 3 companies free, or unlock unlimited companies for £2.49/month. Simple pricing for Shiftaan's security guard shift tracker.",
   },
   "/about": {
     title: "About Shiftaan | Built for Security Guards & Shift Workers",
@@ -65,6 +72,10 @@ export const pageMeta = {
   "/cookies": {
     title: "Cookie Policy | Shiftaan",
     description: "What cookies and essential technology Shiftaan's website and app use, and why.",
+  },
+  "/delete-account": {
+    title: "Delete Your Account | Shiftaan",
+    description: "How to permanently delete your Shiftaan account and all your data, directly from the app or by email.",
   },
 };
 

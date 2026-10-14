@@ -102,3 +102,31 @@ footer{background:#f8f9fb;color:var(--dark);padding:80px 0 28px;border-top:1px s
 .editormodal>div{background:white;border-radius:18px;max-width:800px;max-height:88vh;overflow:auto;padding:28px}
 @media(max-width:900px){.editorgrid{grid-template-columns:1fr}.editorpreview{position:static}}
 .blogcardph{aspect-ratio:16/10;background:var(--pale);display:flex;align-items:center;justify-content:center}
+.contact label.hp{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.formerror{grid-column:1/-1;color:#b42318;background:#ffedeb;border-radius:10px;padding:11px 14px;font-size:.85rem;margin:2px 0 0}
+.contact .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.cookiebanner{position:fixed;left:18px;right:18px;bottom:18px;z-index:50;max-width:620px;margin:0 auto;background:#101828;color:#fff;border-radius:18px;padding:20px 22px;box-shadow:0 20px 50px #0b1a3a55;display:flex;flex-wrap:wrap;align-items:center;gap:16px 20px}
+.cookiebanner p{color:#c9d3e6;font-size:.86rem;margin:0;flex:1 1 260px}
+.cookiebanner a{color:#8fb1ff;font-weight:700}
+.cookiebanner .btn{min-height:40px;padding:0 18px;font-size:.85rem;white-space:nowrap}
+.cookiebanner .btn.secondary{background:transparent;color:#fff;border-color:#ffffff33}
+.cookiebtns{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:480px){.cookiebanner{flex-direction:column;align-items:stretch;text-align:left}.cookiebtns{flex-direction:column}.cookiebanner .btn{width:100%}}
+.cookiechoice{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:26px 0 34px}
+.cookiechoice p{margin:0;font-size:.86rem}
+.cookiechoice .btn{min-height:38px;padding:0 16px;font-size:.82rem}
+.deletesteps{list-style:none;padding:0;counter-reset:step;display:grid;gap:10px}
+.deletesteps li{counter-increment:step;display:flex;gap:14px;align-items:center;color:#344054;font-weight:600;font-size:.95rem}
+.deletesteps li::before{content:counter(step);flex:none;width:28px;height:28px;border-radius:50%;background:var(--pale);color:var(--blue);font-weight:800;font-size:.8rem;display:grid;place-items:center}
+/* Inline icon alignment: SVGs default to baseline, which sits low next to
+   text, so nudge them up slightly wherever one sits inline with a label. */
+svg{vertical-align:-2px}
+.btn span{display:inline-flex;align-items:center}
+.trust{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap}
+.trust svg{color:var(--blue);flex:none}
+.textlink,.faqpage .textlink,b:has(svg){display:inline-flex;align-items:center;gap:5px}
+.pricing li{display:flex;align-items:center;gap:9px}
+.pricing li svg{color:var(--green);flex:none}
+.arr{display:inline-flex}
+.uitop button,.ui label span{display:inline-flex;align-items:center;gap:3px}
+.payui em{display:inline-flex;align-items:center;gap:4px}
