@@ -26,6 +26,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { pageMeta, notFoundMeta, posts as seedPosts, faqs, siteUrl, blogTitle, absImage } from "../src/content.js";
+import { seoPages, hubs, tools, seoMeta, companyLinks, cityLinks, roleLinks, compareLinks, toolLinks } from "../src/seo.js";
 
 // Must match src/supabase.js — duplicated here because this script runs in
 // plain Node, outside the Vite/browser bundle.
@@ -103,7 +104,7 @@ function blogPostingJsonLd(p) {
   };
 }
 
-function render({ routePath, title, description, canonicalPath, image, jsonLd, ogType }) {
+function render({ routePath, title, description, canonicalPath, image, jsonLd, ogType, body }) {
   const canonicalUrl = `${siteUrl}${canonicalPath === "/" ? "/" : canonicalPath}`;
   let html = template;
   html = html.replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(title)}</title>`);
@@ -116,6 +117,9 @@ function render({ routePath, title, description, canonicalPath, image, jsonLd, o
   const ogUrlTag = `<meta property="og:url" content="${canonicalUrl}" />`;
   const jsonLdTag = jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : "";
   html = html.replace("</head>", `    ${ogUrlTag}\n    ${jsonLdTag}\n  </head>`);
+  // Static copy of the page text for crawlers that don't run JS. React's
+  // createRoot() replaces it as soon as the bundle loads.
+  if (body) html = html.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
   return html;
 }
 
@@ -146,6 +150,58 @@ for (const [routePath, meta] of Object.entries(pageMeta)) {
   // /support (same content), so it shouldn't be listed as its own indexable
   // URL — but it's still generated and servable above, with that canonical tag.
   if (!meta.canonical) routeEntries.push(routePath);
+}
+
+// SEO landing pages from src/seo.js: hubs, tools and guides.
+function breadcrumbJsonLd(trail) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map(([p, name], i) => ({ "@type": "ListItem", position: i + 1, name, item: `${siteUrl}${p}` })),
+  };
+}
+function faqPageJsonLd(list) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: list.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+  };
+}
+const sectionsHtml = (sections) => sections.map((s) =>
+  `${s.h ? `<h2>${escapeHtml(s.h)}</h2>` : ""}${(s.p || []).map((x) => `<p>${x}</p>`).join("")}${s.ul ? `<ul>${s.ul.map((x) => `<li>${x}</li>`).join("")}</ul>` : ""}`).join("");
+const linksHtml = (links) => `<ul>${links.map(([href, label]) => `<li><a href="${href}">${escapeHtml(label)}</a></li>`).join("")}</ul>`;
+const heroHtml = (tag, h1, intro) => `<section class="pagehero seohero"><div class="wrap"><span class="eyebrow">${escapeHtml(tag)}</span><h1>${escapeHtml(h1)}</h1><p>${escapeHtml(intro)}</p></div></section>`;
+const hubName = { "/tools": "Free tools", "/companies": "Company guides", "/pay": "Pay guides", "/compare": "Compare" };
+const hubOf = (p) => p.startsWith("/companies/") ? "/companies" : p.startsWith("/compare/") ? "/compare" : p.startsWith("/tools/") ? "/tools" : "/pay";
+const hubLinks = { "/tools": toolLinks, "/companies": companyLinks, "/pay": [...cityLinks, ...roleLinks], "/compare": compareLinks };
+
+for (const [routePath, meta] of Object.entries(seoMeta)) {
+  let body, jsonLd;
+  if (hubs[routePath]) {
+    const h = hubs[routePath];
+    body = `<main>${heroHtml(h.tag, h.h1, h.intro)}<section class="section"><div class="wrap">${linksHtml(hubLinks[routePath])}</div></section></main>`;
+    jsonLd = [breadcrumbJsonLd([["/", "Home"], [routePath, hubName[routePath]]])];
+  } else if (tools[routePath]) {
+    const t = tools[routePath];
+    body = `<main>${heroHtml("Free tool", t.h1, t.intro)}<article class="prose seoprose">${sectionsHtml(t.explain)}</article></main>`;
+    jsonLd = [
+      { "@context": "https://schema.org", "@type": "WebApplication", name: t.h1, description: meta.description, url: `${siteUrl}${routePath}`, applicationCategory: "FinanceApplication", operatingSystem: "Any", offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" } },
+      breadcrumbJsonLd([["/", "Home"], ["/tools", "Free tools"], [routePath, t.h1]]),
+    ];
+  } else {
+    const g = seoPages[routePath];
+    const hub = hubOf(routePath);
+    const faqHtml = g.faqs?.length ? `<h2>Common questions</h2>${g.faqs.map(([q, a]) => `<h3>${escapeHtml(q)}</h3><p>${escapeHtml(a)}</p>`).join("")}` : "";
+    body = `<main>${heroHtml(g.tag, g.h1, g.intro)}<article class="prose seoprose">${sectionsHtml(g.sections)}${faqHtml}</article></main>`;
+    jsonLd = [
+      { "@context": "https://schema.org", "@type": "Article", headline: g.h1, description: g.description, mainEntityOfPage: `${siteUrl}${routePath}`, author: { "@type": "Organization", name: "Shiftaan" }, publisher: { "@type": "Organization", name: "Shiftaan", logo: { "@type": "ImageObject", url: `${siteUrl}/assets/Logo.svg` } }, dateModified: new Date().toISOString().slice(0, 10) },
+      breadcrumbJsonLd([["/", "Home"], [hub, hubName[hub]], [routePath, g.h1]]),
+      ...(g.faqs?.length ? [faqPageJsonLd(g.faqs)] : []),
+    ];
+  }
+  write(routePath, render({ routePath, title: meta.title, description: meta.description, canonicalPath: routePath, image: `${siteUrl}/assets/social-share.png`, jsonLd, body }));
+  routeEntries.push(routePath);
+  htaccessRoutes.push(routePath);
 }
 
 // Blog listing page already covered by pageMeta["/blogs"] above.

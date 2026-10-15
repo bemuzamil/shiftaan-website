@@ -1,0 +1,12 @@
+type Section = { h: string; p?: string[]; ul?: string[] };
+type SeoPage = { title: string; description: string; tag: string; h1: string; intro: string; sections: Section[]; faqs?: string[][]; related?: string[] };
+export const RATES: Record<"asOf" | "nlw" | "r1820" | "r1617" | "apprentice" | "rlw" | "llw", string>;
+export const tools: Record<string, { title: string; description: string; h1: string; intro: string; explain: Section[] }>;
+export const seoPages: Record<string, SeoPage>;
+export const hubs: Record<string, { title: string; description: string; tag: string; h1: string; intro: string }>;
+export const seoMeta: Record<string, { title: string; description: string }>;
+export const companyLinks: string[][];
+export const cityLinks: string[][];
+export const roleLinks: string[][];
+export const compareLinks: string[][];
+export const toolLinks: string[][];

@@ -3,6 +3,8 @@ import { faqs, pageMeta, notFoundMeta, siteUrl, blogTitle, absImage } from "./co
 import { supabase } from "./supabase.js";
 import { AdminGate } from "./Admin";
 import { BlogPostBody } from "./BlogPostBody";
+import { SeoRoute, isSeoRoute } from "./SeoPages";
+import { seoMeta } from "./seo.js";
 import { IconCheck, IconArrowRight, IconMenu, IconClose, IconClock, IconCoin, IconGrid, IconTrendingUp, IconChevronDown } from "./icons";
 
 const APP = "https://app.shiftaan.com";
@@ -14,11 +16,11 @@ const I = ({ children }: { children: ReactNode }) => <span className="icon">{chi
 function Logo(){return <A href="/" className="logo"><img src="/assets/Logo.svg" alt="Shiftaan"/></A>}
 function Nav(){
   const [open,setOpen]=useState(false);
-  const links=[["How it works","/how-it-works"],["Pricing","/pricing"],["Blog","/blogs"],["About","/about"]];
+  const links=[["How it works","/how-it-works"],["Pricing","/pricing"],["Free tools","/tools"],["Pay guides","/pay"],["Blog","/blogs"],["About","/about"]];
   return <header><nav className="wrap nav"><Logo/><div className="links">{links.map(x=><A key={x[1]} href={x[1]}>{x[0]}</A>)}</div><div className="navcta"><A href={APP}>Log in</A><CTA/></div><button className="hamb" aria-label="Toggle menu" onClick={()=>setOpen(!open)}>{open?<IconClose/>:<IconMenu/>}</button></nav>{open&&<div className="mobile">{links.map(x=><A key={x[1]} href={x[1]}>{x[0]}</A>)}<A href={APP}>Log in</A><CTA/></div>}</header>
 }
 function Footer(){
-  const cols=[["Product",["How it works","/how-it-works"],["Pricing","/pricing"],["FAQ","/faq"]],["Resources",["Blog","/blogs"],["Support","/support"]],["Company",["About","/about"]],["Legal",["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Cookie Policy","/cookies"]]];
+  const cols=[["Product",["How it works","/how-it-works"],["Pricing","/pricing"],["FAQ","/faq"]],["Resources",["Blog","/blogs"],["Free tools","/tools"],["Pay guides","/pay"],["Company guides","/companies"],["Compare","/compare"],["Support","/support"]],["Company",["About","/about"]],["Legal",["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Cookie Policy","/cookies"]]];
   return <footer><div className="wrap footergrid"><div><Logo/><p>Track your shifts, hours and pay in one place.</p><CTA/></div><div className="footlinks">{cols.map(c=><div key={c[0] as string}><b>{c[0]}</b>{c.slice(1).map((x:any)=><A href={x[1]} key={x[1]}>{x[0]}</A>)}</div>)}</div></div><div className="wrap fine"><span>© 2026 Shiftaan. All rights reserved.</span><span><A href="https://x.com/tryshiftaan">X</A> · <A href="https://instagram.com/tryshiftaan">Instagram</A> · @tryshiftaan</span></div></footer>
 }
 const COOKIE_CONSENT_KEY="shiftaan-cookie-consent"; // "accepted" | "declined"
@@ -221,7 +223,7 @@ function DeleteAccount(){
   return <Layout><section className="legal"><div className="wrap"><LegalNav/><article><span className="eyebrow">Account deletion</span><h1>Delete your Shiftaan account</h1><p className="lead">You can permanently delete your Shiftaan account and all your data at any time, directly from the app:</p><section><ol className="deletesteps">{steps.map(s=><li key={s}>{s}</li>)}</ol></section><section><h2>What gets deleted</h2><p>Your name, email, all companies, sites, shifts, pay records and expenses, and your login itself. This cannot be undone.</p></section><section><h2>What's kept</h2><p>If you ever subscribed to Shiftaan Pro, Stripe (our payment processor) retains its own transaction records separately, as required by financial law, even after your Shiftaan account is deleted. We don't control or access this beyond what's needed to process refunds or legal requests.</p></section><section><h2>Can't log in to delete your own account?</h2><p>Email <a href="mailto:feedback@shiftaan.com">feedback@shiftaan.com</a> from the address on your account and we'll delete it for you within 30 days.</p></section></article></div></section></Layout>;
 }
 function NotFound(){return <Layout><section className="lost"><div><strong>404</strong><h1>Looks like this shift got lost.</h1><p>The page you're looking for doesn't exist.</p><div className="actions"><A className="btn secondary" href="/">Back home</A><CTA/></div></div></section></Layout>}
-function Router(){const p=location.pathname.replace(/\/+$/,"")||"/";if(p==="/")return <Home/>;if(p==="/how-it-works")return <How/>;if(p==="/pricing")return <Pricing/>;if(p==="/blogs")return <Blogs/>;if(p.startsWith("/blogs/"))return <Blog slug={p.split("/").pop()||""}/>;if(p==="/about")return <About/>;if(p==="/support"||p==="/contact")return <Support/>;if(p==="/faq")return <Layout><FAQ page/><Final/></Layout>;if(["/privacy","/terms","/cookies"].includes(p))return <Legal type={p.slice(1)}/>;if(p==="/delete-account")return <DeleteAccount/>;if(p==="/admin"||p.startsWith("/admin/"))return <AdminGate/>;return <NotFound/>}
+function Router(){const p=location.pathname.replace(/\/+$/,"")||"/";if(p==="/")return <Home/>;if(p==="/how-it-works")return <How/>;if(p==="/pricing")return <Pricing/>;if(p==="/blogs")return <Blogs/>;if(p.startsWith("/blogs/"))return <Blog slug={p.split("/").pop()||""}/>;if(p==="/about")return <About/>;if(p==="/support"||p==="/contact")return <Support/>;if(p==="/faq")return <Layout><FAQ page/><Final/></Layout>;if(["/privacy","/terms","/cookies"].includes(p))return <Legal type={p.slice(1)}/>;if(p==="/delete-account")return <DeleteAccount/>;if(p==="/admin"||p.startsWith("/admin/"))return <AdminGate/>;if(isSeoRoute(p))return <SeoRoute path={p} Layout={Layout} Final={Final}/>;return <NotFound/>}
 function setMeta(name:string,content:string,attr:"name"|"property"="name"){
   let el=document.querySelector(`meta[${attr}="${name}"]`);
   if(!el){el=document.createElement("meta");el.setAttribute(attr,name);document.head.appendChild(el)}
@@ -250,7 +252,7 @@ export default function App(){
       document.title="Loading… | Shiftaan Blog";
       return;
     }
-    const meta:any=known.includes(p)?(pageMeta as any)[p]:notFoundMeta;
+    const meta:any=known.includes(p)?(pageMeta as any)[p]:(seoMeta as any)[p]||notFoundMeta;
     document.title=meta.title;
     setMeta("description",meta.description);
     setMeta("og:title",meta.title,"property");

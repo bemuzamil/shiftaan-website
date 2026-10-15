@@ -130,3 +130,28 @@ svg{vertical-align:-2px}
 .arr{display:inline-flex}
 .uitop button,.ui label span{display:inline-flex;align-items:center;gap:3px}
 .payui em{display:inline-flex;align-items:center;gap:4px}
+
+/* SEO landing pages: guides, hubs and tools (src/SeoPages.tsx, src/Tools.tsx) */
+.seohero{padding:90px 0 60px}.seohero p{margin-bottom:0}
+.crumbs{font-size:.8rem;color:var(--text);margin-bottom:18px}.crumbs a{color:var(--blue);font-weight:600}
+.seoprose{padding:60px 0 90px}.seoprose ul{padding-left:22px}.seoprose li{margin-bottom:8px}.seoprose a{color:var(--blue);font-weight:600;text-decoration:underline;text-underline-offset:3px}.seoprose small{font-size:.85rem;color:var(--text)}
+.seofaq{border-bottom:1px solid var(--line);padding:16px 0}.seofaq summary{font-weight:700;cursor:pointer;font-size:1.05rem}.seofaq p{margin:12px 0 0}
+.relatedtitle{font-size:1.6rem;margin-bottom:22px}.relatedtitle.spaced{margin-top:60px}
+.linkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.linkgrid a{border:1px solid var(--line);border-radius:18px;padding:22px;background:#fff;display:grid;gap:8px;transition:.2s}.linkgrid a:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.linkgrid b{font-family:'Manrope',sans-serif;font-size:1.05rem}.linkgrid small{color:var(--text);font-size:.85rem;line-height:1.5}.linkgrid span{color:var(--blue);font-weight:700;font-size:.8rem;display:inline-flex;gap:6px;align-items:center}
+.hubsection{padding-top:40px}
+.toolwrap{padding:0 0 10px}.toolwrap .wrap{max-width:860px}
+.toolstack{display:grid;gap:20px}
+.toolcard{border:1px solid var(--line);border-radius:24px;background:#fff;padding:30px;box-shadow:var(--shadow);display:grid;gap:20px}.toolcard h3{margin:0}
+.toolgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px 18px;align-items:end}
+.toolfield{display:grid;gap:7px;font-weight:700;font-size:.82rem;color:#344054}.toolfield small{font-weight:500;color:var(--text);font-size:.75rem}
+.toolfield input,.toolfield select{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:1rem;background:#fff;color:var(--dark)}
+.toolcheck{display:flex;gap:10px;align-items:center;font-weight:600;font-size:.88rem;color:#344054;min-height:46px}.toolcheck input{width:18px;height:18px}
+.toolresult{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.toolresult div{background:var(--pale);border-radius:14px;padding:16px;display:grid;gap:6px}.toolresult small{color:var(--text);font-size:.75rem;font-weight:600}.toolresult strong{font:800 1.35rem 'Manrope',sans-serif;color:var(--dark)}.toolresult.bad div{background:#fff3f1}
+.toolsplit{display:grid;grid-template-columns:1fr 1fr;gap:10px}.toolsplit .toolresult{grid-template-columns:1fr}
+.toolverdict{margin:0;padding:14px 16px;border-radius:12px;font-weight:600;font-size:.92rem}.toolverdict.ok{background:#e5f7f1;color:#08795b}.toolverdict.warn{background:#ffedeb;color:#b42318}.toolverdict a{color:inherit;text-decoration:underline}
+.toolnote{font-size:.85rem;color:var(--text);margin:0}.seoprose .toolnote{margin-top:30px}
+.weekgrid{display:grid;gap:6px;overflow-x:auto}.weekgrid>div{display:grid;grid-template-columns:70px repeat(7,minmax(52px,1fr));gap:6px;align-items:center}.weekgrid b{font-size:.75rem;text-align:center;color:#344054}.weekgrid span{font-size:.8rem;font-weight:700;color:#344054}.weekgrid input{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 4px;text-align:center;font-size:.95rem}.weekgrid .totalrow b{color:var(--blue);font-size:.9rem}
+.btn.small{min-height:40px;font-size:.85rem;justify-self:start}
+@media(max-width:900px){.linkgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.seohero{padding:70px 0 40px}.linkgrid,.toolgrid,.toolsplit{grid-template-columns:1fr}.toolcard{padding:20px}.seoprose{width:calc(100% - 32px)}}
+.seoprose p{margin-bottom:16px}.seoprose section{margin-bottom:8px}
